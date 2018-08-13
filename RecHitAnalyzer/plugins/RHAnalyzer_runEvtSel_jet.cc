@@ -69,8 +69,8 @@ bool RecHitAnalyzer::runEvtSel_jet ( const edm::Event& iEvent, const edm::EventS
   for ( unsigned iJ(0); iJ != jets->size(); ++iJ ) {
 
     reco::PFJetRef iJet( jets, iJ );
-    if ( std::abs(iJet->pt()) < 20. ) continue;
-    if ( std::abs(iJet->eta()) > 2.4 ) continue;
+    if ( std::abs(iJet->pt()) < minJetPt_ ) continue;
+    if ( std::abs(iJet->eta()) > maxJetEta_ ) continue;
     //if ( iJet->mass() < 50. || iJet->mass() > 110. ) continue;
     if ( debug ) std::cout << " >> jet[" << iJ << "]Pt:" << iJet->pt() << " jetE:" << iJet->energy() << " jetM:" << iJet->mass() << std::endl;
     nJet++;
