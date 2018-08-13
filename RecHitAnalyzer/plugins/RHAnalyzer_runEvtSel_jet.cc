@@ -15,7 +15,7 @@ TH1D *h_jet_m0;
 TH1D *h_jet_nJet;
 float jet_eventId_;
 float jet_m0_;
-const int nJets = 1;
+const int nJets = 2;
 const int search_window = 7;
 //const int image_padding = 14;
 const int image_padding = 12;
@@ -69,7 +69,7 @@ bool RecHitAnalyzer::runEvtSel_jet ( const edm::Event& iEvent, const edm::EventS
   for ( unsigned iJ(0); iJ != jets->size(); ++iJ ) {
 
     reco::PFJetRef iJet( jets, iJ );
-    if ( std::abs(iJet->pt()) < 200. ) continue;
+    if ( std::abs(iJet->pt()) < 20. ) continue;
     if ( std::abs(iJet->eta()) > 2.4 ) continue;
     //if ( iJet->mass() < 50. || iJet->mass() > 110. ) continue;
     if ( debug ) std::cout << " >> jet[" << iJ << "]Pt:" << iJet->pt() << " jetE:" << iJet->energy() << " jetM:" << iJet->mass() << std::endl;
