@@ -37,8 +37,9 @@ RecHitAnalyzer::RecHitAnalyzer(const edm::ParameterSet& iConfig)
     doJets_    = true;
     minJetPt_ = iConfig.getParameter<double>("minJetPt");
     maxJetEta_ = iConfig.getParameter<double>("maxJetEta");
-    std::cout << "\tminJetPt " << minJetPt_ << "\tmaxJetEta " << maxJetEta_ << std::endl;
-    //nJets_ = iConfig.getParameter<int>("nJets");
+    nJets_ = iConfig.getParameter<int>("nJets");
+    std::cout << "\tminJetPt " << minJetPt_ << "\tmaxJetEta " << maxJetEta_ << "\tnJets " << nJets_ << std::endl;
+
   }else if (mode_ == "EventLevel"){
     doJets_ = false;
   } else {
@@ -108,7 +109,10 @@ RecHitAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   }
 
 
-  if ( !passedSelection ) return;
+  if ( !passedSelection ) {
+    if ( debug ) std::cout << " Failed selection"  << std::endl;
+    return;
+  }
 
   fillEB( iEvent, iSetup );
   fillEE( iEvent, iSetup );

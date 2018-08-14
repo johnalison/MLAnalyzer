@@ -117,7 +117,7 @@ class RecHitAnalyzer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     double maxJetEta_;
     std::string mode_ = "EventLevel";  // EventLevel / JetLevel
     bool doJets_;
-    //int  nJets_;
+    int  nJets_;
 
     // Diagnostic histograms
     //TH2D * hEB_adc[EcalDataFrame::MAXSAMPLES]; 

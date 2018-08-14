@@ -15,7 +15,7 @@ TH1D *h_jet_m0;
 TH1D *h_jet_nJet;
 float jet_eventId_;
 float jet_m0_;
-const int nJets = 2;
+const int nJets = 1;
 const int search_window = 7;
 //const int image_padding = 14;
 const int image_padding = 12;
@@ -114,7 +114,7 @@ bool RecHitAnalyzer::runEvtSel_jet ( const edm::Event& iEvent, const edm::EventS
       } // iphi 
     } // ieta
     jetIdx = iJ;
-    if ( nJet >= nJets ) break;
+    if ( nJet >= nJets_ ) break;
     // Doesnt seem to work:
     //const CaloSubdetectorTopology* topo = caloTopo->getSubdetectorTopology( hId );
     //const CaloSubdetectorTopology* topo = caloTopo->getSubdetectorTopology( DetId::Hcal, hId.subdet() );
@@ -126,7 +126,10 @@ bool RecHitAnalyzer::runEvtSel_jet ( const edm::Event& iEvent, const edm::EventS
   h_jet_nJet->Fill( nJet );
   if ( debug ) std::cout << " >> jetIdx:" << jetIdx << std::endl;
 
-  if ( nJet != nJets ) return false;
+  if ( nJet != nJets_ ) {
+    if ( debug ) std::cout << " Failed nJets"  << std::endl;
+    return false;
+  }
 
   // NOTE: HBHE iphi = 1 does not correspond to EB iphi = 1!
   // => Need to shift by 2 HBHE towers: HBHE::iphi: [1,...,71,72]->[3,4,...,71,72,1,2]
@@ -147,12 +150,15 @@ bool RecHitAnalyzer::runEvtSel_jet ( const edm::Event& iEvent, const edm::EventS
 
   // If the seed is too close to the edge of HE, discard event
   // Required to keep the seed at the image center
-  if ( HBHE_IETA_MAX_HE-1 - ietaAbs_ < image_padding ) return false;
+  if ( HBHE_IETA_MAX_HE-1 - ietaAbs_ < image_padding ) {
+    if ( debug ) std::cout << " Failed image_padding"  << std::endl;
+    return false;
+  }
 
   // Save position of highest HBHE tower
   // in EB-aligned coordinates
   if ( debug ) std::cout << " !! ieta_:" << ieta_ << " iphi_:" << iphi_ << " ietaAbs_:" << ietaAbs_ << " E:" << seedE << std::endl;
-  for ( int iJet = 0; iJet < nJets; iJet++ ) {
+  for ( int iJet = 0; iJet < nJets_; iJet++ ) {
     vJetSeed_iphi_[iJet] = iphi_;
     vJetSeed_ieta_[iJet] = ieta_;
   }
@@ -169,6 +175,7 @@ bool RecHitAnalyzer::runEvtSel_jet ( const edm::Event& iEvent, const edm::EventS
   jet_m0_ = leadJet->mass();
   jet_eventId_ = iEvent.id().event();
 
+  if ( debug ) std::cout << "  Passed! "  << std::endl;
   return true;
 
 } // runEvtSel_jet()
