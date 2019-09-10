@@ -238,7 +238,7 @@ RecHitAnalyzer::getTrackCand(edm::Handle<reco::TrackCollection> trackCands, floa
 
 
 
-int RecHitAnalyzer::getTruthLabel(const reco::PFJetRef& recJet, edm::Handle<reco::GenParticleCollection> genParticles, float dRMatch , bool debug ){
+const reco::GenParticle* RecHitAnalyzer::getTruthParticle(const reco::PFJetRef& recJet, edm::Handle<reco::GenParticleCollection> genParticles, float dRMatch , bool debug ){
   if ( debug ) {
     std::cout << " Mathcing reco jetPt:" << recJet->pt() << " jetEta:" << recJet->eta() << " jetPhi:" << recJet->phi() << std::endl;
   }
@@ -272,16 +272,13 @@ int RecHitAnalyzer::getTruthLabel(const reco::PFJetRef& recJet, edm::Handle<reco
 
     if ( dR > dRMatch ) continue; 
     if ( debug ) std::cout << " Matched pdgID " << iGen->pdgId() << std::endl;
-
-    return iGen->pdgId();
+    
+    const reco::GenParticle& genPart = *iGen;
+    return &genPart;//->pdgId();
 
   } // gen particles 
 
-
-
-
-
-  return -99;
+  return nullptr;
 }
 
 

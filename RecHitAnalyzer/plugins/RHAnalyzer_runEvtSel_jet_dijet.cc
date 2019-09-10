@@ -15,6 +15,7 @@ vector<float> vDijet_jet_m0_;
 vector<float> vDijet_jet_eta_;
 vector<float> vDijet_jet_phi_;
 vector<float> vDijet_jet_truthLabel_;
+vector<float> vDijet_jet_truthPt_;
 vector<float> vDijet_jet_btaggingValue_;
 
 
@@ -32,7 +33,9 @@ void RecHitAnalyzer::branchesEvtSel_jet_dijet( TTree* tree, edm::Service<TFileSe
   tree->Branch("jetEta",         &vDijet_jet_eta_);
   tree->Branch("jetPhi",         &vDijet_jet_phi_);
   tree->Branch("jet_truthLabel", &vDijet_jet_truthLabel_);
+  tree->Branch("jet_truthPt",    &vDijet_jet_truthPt_);
   tree->Branch("jet_btagValue",  &vDijet_jet_btaggingValue_);
+
 
 } // branchesEvtSel_jet_dijet()
 
@@ -49,6 +52,7 @@ bool RecHitAnalyzer::runEvtSel_jet_dijet( const edm::Event& iEvent, const edm::E
   vDijet_jet_eta_.clear();
   vDijet_jet_phi_.clear();
   vDijet_jet_truthLabel_.clear();
+  vDijet_jet_truthPt_.clear();
   vDijet_jet_btaggingValue_.clear();
 
   int nJet = 0;
@@ -140,12 +144,18 @@ void RecHitAnalyzer::fillEvtSel_jet_dijet( const edm::Event& iEvent, const edm::
     vDijet_jet_eta_.push_back( thisJet->eta() );
     vDijet_jet_phi_.push_back( thisJet->phi() );
 
-    int truthLabel = getTruthLabel(thisJet,genParticles,0.4, false);
-    if(truthLabel == -99){
-      std::cout << "ERROR truth -99" << std::endl;
-      getTruthLabel(thisJet,genParticles,0.4, true);
+    const reco::GenParticle* genMatch = getTruthParticle(thisJet,genParticles,0.4, false);
+    int truthLabel = -99;
+    int truthPt    = -99;
+    if(!genMatch){
+      std::cout << "ERROR truth match null" << std::endl;
+      getTruthParticle(thisJet,genParticles,0.4, true);
+    }else{
+      truthLabel = genMatch->pdgId();
+      truthPt    = genMatch->pt();
     }
     vDijet_jet_truthLabel_      .push_back(truthLabel);
+    vDijet_jet_truthPt_         .push_back(truthPt);
 
     float bTagValue = getBTaggingValue(thisJet,recoJetCollection,btagDiscriminators);
     vDijet_jet_btaggingValue_      .push_back(bTagValue);

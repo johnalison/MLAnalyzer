@@ -117,8 +117,10 @@ for iEvt in range(iEvtStart,iEvtEnd):
     #MuonsAtECAL_pt = np.array(rhTree.ECAL_muonsPt).reshape(280,360)
     MuonsAtECAL_Qpt = np.array(rhTree.ECAL_muonsQPt).reshape(280,360)
     #data['X_CMSII'] = np.stack([MuonsAtECAL_pt, TracksAtECAL_Qpt, ECAL_energy, HBHE_energy], axis=0) # (4, 280, 360)
-    data['X_CMSII'] = np.stack([MuonsAtECAL_Qpt, TracksAtECAL_Qpt, ECAL_energy, HBHE_energy, 
-                                TracksAtECAL_IP2D,TracksAtECAL_IP2Dsig,TracksAtECAL_IP3D,TracksAtECAL_IP3Dsig,
+    data['X_CMSII'] = np.stack([MuonsAtECAL_Qpt, TracksAtECAL_Qpt_PV, ECAL_energy, HBHE_energy, 
+                                TracksAtECAL_Qpt_nPV,
+                                TracksAtECAL_d0_PV, TracksAtECAL_z0_PV, TracksAtECAL_d0sig_PV, TracksAtECAL_z0sig_PV,
+                                TracksAtECAL_IP2D,TracksAtECAL_IP3D,TracksAtECAL_IP2Dsig,TracksAtECAL_IP3Dsig,
                                 ], axis=0) # (4, 280, 360)
 
     # Jet attributes 
@@ -126,6 +128,7 @@ for iEvt in range(iEvtStart,iEvtEnd):
     pts = rhTree.jetPt
     etas = rhTree.jetEta
     phis = rhTree.jetPhi
+    btagVals = rhTree.jet_btagValue
     iphis = rhTree.jetSeed_iphi
     ietas = rhTree.jetSeed_ieta
     njets = len(ys)
@@ -136,6 +139,7 @@ for iEvt in range(iEvtStart,iEvtEnd):
         data['pt'] = pts[i]
         data['eta'] = etas[i]
         data['phi'] = phis[i]
+        data['btagVal'] = btagVals[i]
         data['iphi'] = iphis[i]
         data['ieta'] = ietas[i]
         #data['pdgId'] = pdgIds[i]
@@ -162,7 +166,7 @@ print "========================================================"
 pqIn = pq.ParquetFile(outStr)
 print(pqIn.metadata)
 print(pqIn.schema)
-X = pqIn.read_row_group(0, columns=['y','pt','eta','phi','iphi','ieta']).to_pydict()
+X = pqIn.read_row_group(0, columns=['y','pt','eta','phi','btagVal','iphi','ieta']).to_pydict()
 print(X)
 #X = pqIn.read_row_group(0, columns=['X_jet.list.item.list.item.list.item']).to_pydict()['X_jet'] # read row-by-row 
 #X = pqIn.read(['X_jet.list.item.list.item.list.item', 'y']).to_pydict()['X_jet'] # read entire column(s)
